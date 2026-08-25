@@ -35,9 +35,9 @@ public class ContactController {
     // http://localhost:8080/api/contact/getById?id=2
     @GetMapping("/getById")
     public Contact getContactById (@RequestParam int id) {
-        for (Contact contact : contacts) {
-            if (contact.getId() == id) return contact;
-        }
-        return new Contact();
+        return contacts.stream().
+                filter(contact -> contact.getId() == id).
+                findFirst().
+                orElse(new Contact());
     }
 }
