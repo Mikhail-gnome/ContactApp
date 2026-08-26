@@ -1,10 +1,7 @@
 package Mikhail_gnome.com.github.contactApp.controller;
 
 import Mikhail_gnome.com.github.contactApp.entity.Contact;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 
@@ -33,8 +30,8 @@ public class ContactController {
     }
 
     // http://localhost:8080/api/contact/getById?id=2
-    @GetMapping("/getById")
-    public Contact getContactById (@RequestParam int id) {
+    @GetMapping("/get/{id}")
+    public Contact getContactById (@PathVariable int id) {
         return contacts.stream().
                 filter(contact -> contact.getId() == id).
                 findFirst().
