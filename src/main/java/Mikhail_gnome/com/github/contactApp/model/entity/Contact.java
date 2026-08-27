@@ -1,4 +1,4 @@
-package Mikhail_gnome.com.github.contactApp.entity;
+package Mikhail_gnome.com.github.contactApp.model.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,6 +1,7 @@
 package Mikhail_gnome.com.github.contactApp.controller;
 
-import Mikhail_gnome.com.github.contactApp.entity.Contact;
+import Mikhail_gnome.com.github.contactApp.model.ServerResponse;
+import Mikhail_gnome.com.github.contactApp.model.entity.Contact;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -25,16 +26,36 @@ public class ContactController {
 
     // http://localhost:8080/api/contact/get
     @GetMapping("/get")
-    public ArrayList<Contact> getContacts() {
-        return contacts;
+    public ServerResponse<ArrayList<Contact>> getContacts() {
+
+        return ServerResponse.<ArrayList<Contact>>builder()
+                .result(this.contacts)
+                .statusCode(200)
+                .isSuccess(true)
+                .errorMessages(new ArrayList<>())
+                .build();
     }
 
     // http://localhost:8080/api/contact/getById?id=2
     @GetMapping("/get/{id}")
-    public Contact getContactById (@PathVariable int id) {
-        return contacts.stream().
-                filter(contact -> contact.getId() == id).
+    public ServerResponse<Contact> getContactById (@PathVariable int id) {
+        Contact contact = contacts.stream().
+                filter(c -> c.getId() == id).
                 findFirst().
-                orElse(new Contact());
+                orElse(null);
+        if (contact == null) {
+            return ServerResponse.<Contact>builder()
+                    .result(null)
+                    .statusCode(204)
+                    .isSuccess(true)
+                    .errorMessages(new ArrayList<>())
+                    .build();
+        }
+        return ServerResponse.<Contact>builder()
+                .result(contact)
+                .statusCode(200)
+                .isSuccess(true)
+                .errorMessages(new ArrayList<>())
+                .build();
     }
 }
