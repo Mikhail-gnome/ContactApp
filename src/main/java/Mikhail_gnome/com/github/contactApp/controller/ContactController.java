@@ -1,7 +1,10 @@
 package Mikhail_gnome.com.github.contactApp.controller;
 
+import Mikhail_gnome.com.github.contactApp.common.util.ServerResponseHelper;
 import Mikhail_gnome.com.github.contactApp.model.ServerResponse;
 import Mikhail_gnome.com.github.contactApp.model.entity.Contact;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -26,36 +29,23 @@ public class ContactController {
 
     // http://localhost:8080/api/contact/get
     @GetMapping("/get")
-    public ServerResponse<ArrayList<Contact>> getContacts() {
+    public ResponseEntity<ServerResponse<ArrayList<Contact>>> getContacts() {
 
-        return ServerResponse.<ArrayList<Contact>>builder()
-                .result(this.contacts)
-                .statusCode(200)
-                .isSuccess(true)
-                .errorMessages(new ArrayList<>())
-                .build();
+
+        return ServerResponseHelper.ok(this.contacts);
     }
 
     // http://localhost:8080/api/contact/getById?id=2
     @GetMapping("/get/{id}")
-    public ServerResponse<Contact> getContactById (@PathVariable int id) {
+    public ResponseEntity<ServerResponse<Contact>> getContactById (@PathVariable int id) {
         Contact contact = contacts.stream().
                 filter(c -> c.getId() == id).
                 findFirst().
                 orElse(null);
+
         if (contact == null) {
-            return ServerResponse.<Contact>builder()
-                    .result(null)
-                    .statusCode(204)
-                    .isSuccess(true)
-                    .errorMessages(new ArrayList<>())
-                    .build();
+            return ServerResponseHelper.notFound(null);
         }
-        return ServerResponse.<Contact>builder()
-                .result(contact)
-                .statusCode(200)
-                .isSuccess(true)
-                .errorMessages(new ArrayList<>())
-                .build();
+        return ServerResponseHelper.ok(contact);
     }
 }

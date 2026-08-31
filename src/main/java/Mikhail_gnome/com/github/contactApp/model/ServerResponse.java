@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,7 +19,7 @@ public class ServerResponse <T> {
     private boolean isSuccess;
     private HttpStatus statusCode;
     @JsonProperty("errors")
-    private ArrayList<String> errorMessages;
+    private List<String> errorMessages;
     private T result;
 
     public ServerResponse() {
