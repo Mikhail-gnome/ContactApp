@@ -1,6 +1,7 @@
 package Mikhail_gnome.com.github.contactApp.common.util;
 
 import Mikhail_gnome.com.github.contactApp.model.ServerResponse;
+import Mikhail_gnome.com.github.contactApp.model.entity.Contact;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -34,4 +35,23 @@ public class ServerResponseHelper {
         return notFound(result, Collections.singletonList("Данные не найдены"));
     }
 
+    public static <T> ResponseEntity<ServerResponse<T>> conflict(T result, List<String> errors){
+        HttpStatus httpStatus = HttpStatus.CONFLICT;
+        ServerResponse<T> response = ServerResponse.<T>builder().result(result)
+                .statusCode(httpStatus).isSuccess(false).errorMessages(errors)
+                .build();
+        return ResponseEntity.status(httpStatus).body(response);
+    }
+    public static <T> ResponseEntity<ServerResponse<T>> conflict(T result){
+return conflict(result, Collections.singletonList("Конфликт при выполнении операции"));
+    }
+
+    public static <T> ResponseEntity<ServerResponse<T>> created(T result) {
+        HttpStatus httpStatus = HttpStatus.CREATED;
+        ServerResponse<T> response = ServerResponse.<T>builder()
+                .result(result).statusCode(httpStatus).isSuccess(true)
+                .errorMessages(new ArrayList<>())
+                .build();
+        return ResponseEntity.status(httpStatus).body(response);
+    }
 }
