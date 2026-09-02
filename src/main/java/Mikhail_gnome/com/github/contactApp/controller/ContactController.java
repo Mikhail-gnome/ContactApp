@@ -69,4 +69,17 @@ public ResponseEntity<ServerResponse<Contact>> createContact(@RequestBody Contac
         contacts.add(contact);
         return ServerResponseHelper.created(contact);
 }
+
+@PutMapping("/update")
+    public ResponseEntity<ServerResponse<Contact>> updateContact(@RequestBody Contact contact){
+    int count = contacts.size();
+    for (int i = 0; i < count; i++){
+        if(contact.getId() == contacts.get(i).getId()) {
+            contacts.set(i, contact);
+            return ServerResponseHelper.ok(contact);
+        }
+    }
+    return ServerResponseHelper
+            .notFound(null, Collections.singletonList("Контакт с указанным ID не был найден"));
+}
 }
