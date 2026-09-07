@@ -4,6 +4,8 @@ import Mikhail_gnome.com.github.contactApp.common.util.ServerResponseHelper;
 import Mikhail_gnome.com.github.contactApp.model.ServerResponse;
 import Mikhail_gnome.com.github.contactApp.model.dto.CreateContactDto;
 import Mikhail_gnome.com.github.contactApp.model.entity.Contact;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,10 @@ import java.util.Collections;
 @RestController
 @RequestMapping("/api/contact")
 public class ContactController {
+
+    @Autowired
+    private ModelMapper modelMapper;
+
     private ArrayList<Contact> contacts = new ArrayList<>();
 
     public ContactController() {
@@ -66,13 +72,13 @@ public ResponseEntity<ServerResponse<Contact>> createContact(@RequestBody Create
         if (emailExists) {
             return ServerResponseHelper.conflict(null, Collections.singletonList("Контакт с таким email уже существует"));
         }
-    Contact contact = new Contact();
+    Contact contact = modelMapper.map(createContactDto, Contact.class);
             contact.setId(newId);
-            contact.setFirstName(createContactDto.getFirstName());
-            contact.setLastName(createContactDto.getLastName());
-            contact.setEmail(createContactDto.getEmail());
-            contact.setTelephone(createContactDto.getTelephone());
-    contacts.add(contact);
+//            contact.setFirstName(createContactDto.getFirstName());
+//            contact.setLastName(createContactDto.getLastName());
+//            contact.setEmail(createContactDto.getEmail());
+//            contact.setTelephone(createContactDto.getTelephone());
+//            contacts.add(contact);
         return ServerResponseHelper.created(contact);
 }
     @PutMapping("/update")
