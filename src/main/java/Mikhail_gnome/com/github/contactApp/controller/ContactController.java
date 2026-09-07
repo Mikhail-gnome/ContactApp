@@ -4,6 +4,7 @@ import Mikhail_gnome.com.github.contactApp.common.util.ServerResponseHelper;
 import Mikhail_gnome.com.github.contactApp.model.ServerResponse;
 import Mikhail_gnome.com.github.contactApp.model.dto.CreateContactDto;
 import Mikhail_gnome.com.github.contactApp.model.entity.Contact;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -65,7 +66,10 @@ public class ContactController {
 }
 
 @PostMapping("/create")
-public ResponseEntity<ServerResponse<Contact>> createContact(@RequestBody CreateContactDto createContactDto){
+public ResponseEntity<ServerResponse<Contact>> createContact(
+        @RequestBody
+        @Valid
+        CreateContactDto createContactDto){
         int newId = contacts.stream().mapToInt(Contact::getId).max().orElse(0) + 1;
         boolean emailExists = contacts.stream()
                 .anyMatch(c -> c.getEmail().equalsIgnoreCase(createContactDto.getEmail()));

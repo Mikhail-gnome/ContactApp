@@ -1,9 +1,9 @@
 package Mikhail_gnome.com.github.contactApp.model.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 @Getter
 @Setter
@@ -11,8 +11,11 @@ import lombok.Setter;
 @NoArgsConstructor
 
 public class CreateContactDto {
+        @NotEmpty(message = "Имя не может быть пустым")
         private String firstName;
+        @NotEmpty(message = "Имя не может быть пустым")
         private String lastName;
         private String telephone;
+        @Email(message = "Некорректный email")
         private String email;
 }
