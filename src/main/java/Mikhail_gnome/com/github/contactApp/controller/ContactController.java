@@ -3,6 +3,7 @@ package Mikhail_gnome.com.github.contactApp.controller;
 import Mikhail_gnome.com.github.contactApp.common.util.ServerResponseHelper;
 import Mikhail_gnome.com.github.contactApp.model.ServerResponse;
 import Mikhail_gnome.com.github.contactApp.model.dto.CreateContactDto;
+import Mikhail_gnome.com.github.contactApp.model.dto.UpdateContactDto;
 import Mikhail_gnome.com.github.contactApp.model.entity.Contact;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -82,13 +83,35 @@ public ResponseEntity<ServerResponse<Contact>> createContact(
         return ServerResponseHelper.created(contact);
 }
     @PutMapping("/update")
-    public ResponseEntity<ServerResponse<Contact>> updateContact(@RequestBody Contact contact) {
-        return contacts.stream().filter(c -> c.getId() == contact.getId()).findFirst()
-                .map(existingContact -> {
-                    int index = contacts.indexOf(existingContact);
-                    contacts.set(index, contact);
-                    return ServerResponseHelper.ok(contact);
-                }).orElse(ServerResponseHelper
-                        .notFound(null, Collections.singletonList("Контакт с указанным ID не был найден")));
+    public ResponseEntity<ServerResponse<Contact>> updateContact(
+            @RequestBody
+            @Valid
+            UpdateContactDto updateContactDto) {
+Contact existingContact = contacts.stream().filter(c -> c.getId() == updateContactDto.getId())
+        .findFirst().orElse(null);
+if (existingContact == null) {
+    return ServerResponseHelper
+            .notFound(null, Collections.singletonList("Контакт с указанным ID не найден"));
+}
+
+boolean emailExists = contacts.stream().filter(c -> c.getId() != updateContactDto.getId())
+        .anyMatch(c -> c.getEmail().equalsIgnoreCase(updateContactDto.getEmail()));
+if (emailExists){
+    return ServerResponseHelper
+            .conflict(null, Collections.singletonList("Контакт с указанным email уже существует"));
+}
+
+        boolean phoneExists = contacts.stream().filter(c -> c.getId() != updateContactDto.getId())
+                .anyMatch(c -> c.getTelephone().equals(updateContactDto.getTelephone()));
+        if (phoneExists){
+            return ServerResponseHelper
+                    .conflict(null, Collections.singletonList("Контакт с указанным телефоном уже существует"));
+        }
+Contact updateContact = modelMapper.map(updateContactDto, Contact.class);
+
+        int index = contacts.indexOf(existingContact);
+
+        contacts.set(index, updateContact);
+        return ServerResponseHelper.ok(updateContact);
     }
 }
