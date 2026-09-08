@@ -14,7 +14,7 @@ import lombok.Setter;
 public class UpdateContactDto {
 
         @NotNull(message = "ID обязателен")
-        private int id;
+        private Integer id;
 
         @NotBlank(message = "Имя не может быть пустым")
         @Size(min = 2, max = 50, message = "Имя должно быть от 2-х до 50-ти символов")
