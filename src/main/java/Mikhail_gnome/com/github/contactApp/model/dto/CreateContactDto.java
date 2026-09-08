@@ -14,7 +14,7 @@ import lombok.*;
 public class CreateContactDto {
         @NotEmpty(message = "Имя не может быть пустым")
         private String firstName;
-        @NotEmpty(message = "Имя не может быть пустым")
+        @NotEmpty(message = "Фамилия не может быть пустой")
         private String lastName;
         @Pattern(regexp = "\\+7\\(\\d{3}\\)\\d{3} \\d{2} \\d{2}", message = "Неверный формат телефона")
         private String telephone;
