@@ -1,6 +1,7 @@
 package Mikhail_gnome.com.github.contactApp.model.entity;
 
 import Mikhail_gnome.com.github.contactApp.model.enums.AppRole;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +17,7 @@ public class ContactOwner {
     private String username;
     private String description;
     private String email;
+    @JsonIgnore
     private String password;
     private AppRole role;
 
