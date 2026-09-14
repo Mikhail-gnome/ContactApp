@@ -2,21 +2,18 @@ package Mikhail_gnome.com.github.contactApp.controller;
 
 import Mikhail_gnome.com.github.contactApp.common.util.ServerResponseHelper;
 import Mikhail_gnome.com.github.contactApp.model.ServerResponse;
+import Mikhail_gnome.com.github.contactApp.model.dto.CreateContactDto;
+import Mikhail_gnome.com.github.contactApp.model.dto.CreateContactOwnerDto;
 import Mikhail_gnome.com.github.contactApp.model.entity.ContactOwner;
 import Mikhail_gnome.com.github.contactApp.model.enums.AppRole;
 import com.github.javafaker.Faker;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.IntStream;
 
 @RestController
@@ -59,5 +56,14 @@ public class ContactOwnerController {
                 .findFirst().map(ServerResponseHelper::ok).orElseGet(() -> ServerResponseHelper.notFound(null));
     }
 
-
+@PostMapping("/create")
+   public ResponseEntity<ServerResponse<ContactOwner>> createContactOwner(@Valid
+                                                                          @RequestBody CreateContactOwnerDto createContactOwnerDto){
+if(contactOwners.stream().anyMatch(owner -> owner.getEmail().equalsIgnoreCase(createContactOwnerDto.getEmail()))){
+    return ServerResponseHelper.conflict(null, Collections.singletonList("Email уже занят"));
+       }
+    ContactOwner newOwner = modelMapper.map(createContactOwnerDto, ContactOwner.class);
+contactOwners.add(newOwner);
+    return ServerResponseHelper.created(newOwner);
+}
 }

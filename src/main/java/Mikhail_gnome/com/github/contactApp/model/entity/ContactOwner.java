@@ -25,6 +25,7 @@ public class ContactOwner {
 
     public ContactOwner() {
         this.id = UUID.randomUUID().toString();
+        this.role = AppRole.USER;
     }
 
     public ContactOwner(String username, String description) {
