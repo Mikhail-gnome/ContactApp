@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -51,5 +52,12 @@ public class ContactOwnerController {
     public ResponseEntity<ServerResponse<List<ContactOwner>>> getAllContactOwner(){
         return ServerResponseHelper.ok(contactOwners);
     }
+
+    @GetMapping("/get/{id}")
+    public ResponseEntity<ServerResponse<ContactOwner>> getAllContactOwner(@PathVariable String id){
+        return contactOwners.stream().filter(owner -> owner.getId().equals(id))
+                .findFirst().map(ServerResponseHelper::ok).orElseGet(() -> ServerResponseHelper.notFound(null));
+    }
+
 
 }
