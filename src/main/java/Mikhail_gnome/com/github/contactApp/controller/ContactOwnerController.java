@@ -92,4 +92,20 @@ public class ContactOwnerController {
         return removed ? ServerResponseHelper.ok(null) : ServerResponseHelper.notFound(null,
                 Collections.singletonList("Владелец с указанным ID не найден"));
     }
+
+    @GetMapping("/search/name/{name}")
+    public ResponseEntity<ServerResponse<List<ContactOwner>>> searchByName(@PathVariable String name) {
+        List<ContactOwner> found = contactOwners.stream().filter(co -> co.getUsername().equalsIgnoreCase(name))
+                .toList();
+        return ServerResponseHelper.ok(found);
+    }
+
+    @GetMapping("/search/keyword/{keyword}")
+    public ResponseEntity<ServerResponse<List<ContactOwner>>> searchByKeyword(@PathVariable String keyword) {
+        List<ContactOwner> found = contactOwners.stream().filter(co -> co.getUsername().contains(keyword)
+                || co.getDescription().contains(keyword)
+                ||co.getEmail().contains(keyword))
+                .toList();
+        return ServerResponseHelper.ok(found);
+    }
 }
