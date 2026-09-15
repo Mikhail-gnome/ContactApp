@@ -85,4 +85,11 @@ public class ContactOwnerController {
         contactOwners.set(index, updateContactOwner);
         return ServerResponseHelper.ok(updateContactOwner);
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ServerResponse<Void>> deleteContactOwner(@PathVariable String id){
+        boolean removed = contactOwners.removeIf(owner -> owner.getId().equalsIgnoreCase(id));
+        return removed ? ServerResponseHelper.ok(null) : ServerResponseHelper.notFound(null,
+                Collections.singletonList("Владелец с указанным ID не найден"));
+    }
 }
