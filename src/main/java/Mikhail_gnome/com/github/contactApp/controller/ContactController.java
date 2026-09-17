@@ -19,8 +19,7 @@ import java.util.Collections;
 @RequestMapping("/api/contact")
 public class ContactController {
 
-    @Autowired
-    private ModelMapper modelMapper;
+
 
     // private ArrayList<Contact> contacts = new ArrayList<>();
 
