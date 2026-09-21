@@ -1,6 +1,8 @@
 package Mikhail_gnome.com.github.contactApp.exception.handler;
 
 import Mikhail_gnome.com.github.contactApp.common.util.ServerResponseHelper;
+import Mikhail_gnome.com.github.contactApp.exception.handler.customException.EntityNotFoundException;
+import Mikhail_gnome.com.github.contactApp.exception.handler.customException.ValidationException;
 import Mikhail_gnome.com.github.contactApp.model.ServerResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -22,4 +24,15 @@ public class GlobalExceptionHandler {
                 .toList();
         return ServerResponseHelper.conflict(null, errors);
     }
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ServerResponse<Void>> handlerEntityNotFound(
+            EntityNotFoundException ex) {
+        return ServerResponseHelper.notFound(null, Collections.singletonList(ex.getMessage()));
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ServerResponse<Void>> handlerValidationError(
+            ValidationException ex) {
+        return ServerResponseHelper.conflict(null, Collections.singletonList(ex.getMessage()));
+}
 }

@@ -37,7 +37,8 @@ public class ContactServiceImpl implements ContactService {
     @Override
     public Contact createContact(CreateContactDto dto) {
         contactRepository.findByEmail(dto.getEmail())
-                .ifPresent(contact -> {throw new ValidationException("Контакт с таким Email уже существует");
+                .ifPresent(contact -> {
+                    throw new ValidationException("Контакт с таким Email уже существует");
         });
         Contact contact = modelMapper.map(dto, Contact.class);
 
