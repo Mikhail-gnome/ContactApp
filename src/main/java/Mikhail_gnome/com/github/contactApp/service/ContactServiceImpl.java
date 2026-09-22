@@ -2,10 +2,10 @@ package Mikhail_gnome.com.github.contactApp.service;
 
 import Mikhail_gnome.com.github.contactApp.dao.ContactRepository;
 import Mikhail_gnome.com.github.contactApp.exception.handler.customException.EntityNotFoundException;
+import Mikhail_gnome.com.github.contactApp.exception.handler.customException.ValidationException;
 import Mikhail_gnome.com.github.contactApp.model.dto.CreateContactDto;
 import Mikhail_gnome.com.github.contactApp.model.dto.UpdateContactDto;
 import Mikhail_gnome.com.github.contactApp.model.entity.Contact;
-import jakarta.validation.ValidationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

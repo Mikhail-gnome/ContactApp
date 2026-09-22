@@ -41,7 +41,6 @@ public class ContactRepositoryImpl implements ContactRepository{
             int newId = contacts.stream().mapToInt(Contact::getId).max().orElse(0) + 1;
             contact.setId(newId);
             contacts.add(contact);
-            return null;
         } else {
             Contact findContact = contacts.stream()
                     .filter(c -> c.getId() == contact.getId())
@@ -50,8 +49,8 @@ public class ContactRepositoryImpl implements ContactRepository{
             if (index != -1) {
                 contacts.set(index, contact);
             }
-return  contact;
         }
+        return  contact;
     }
 
     @Override
