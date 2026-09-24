@@ -24,8 +24,6 @@ public class ContactOwner {
     private List<Contact> contacts = new ArrayList<>();
 
     public ContactOwner() {
-        this.id = UUID.randomUUID().toString();
-        this.role = AppRole.USER;
     }
 
     public ContactOwner(String username, String description) {
@@ -45,6 +43,10 @@ public class ContactOwner {
                 && Objects.equals(password, that.password)
                 && role == that.role
                 && Objects.equals(contacts, that.contacts);
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     @Override

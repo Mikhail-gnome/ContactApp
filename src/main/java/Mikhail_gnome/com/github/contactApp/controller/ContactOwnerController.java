@@ -7,6 +7,7 @@ import Mikhail_gnome.com.github.contactApp.model.dto.CreateContactOwnerDto;
 import Mikhail_gnome.com.github.contactApp.model.dto.UpdateContactOwnerDto;
 import Mikhail_gnome.com.github.contactApp.model.entity.ContactOwner;
 import Mikhail_gnome.com.github.contactApp.model.enums.AppRole;
+import Mikhail_gnome.com.github.contactApp.service.ContactOwnerService;
 import com.github.javafaker.Faker;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -20,92 +21,52 @@ import java.util.stream.IntStream;
 @RestController
 @RequestMapping("api/owner")
 public class ContactOwnerController {
-
-    @Autowired
-    private ModelMapper modelMapper;
-
-    private final ArrayList<ContactOwner> contactOwners = new ArrayList<>();
-
-    private final Faker faker = new Faker(Locale.of("ru"));
-
-    public ContactOwnerController() {
-        init();
+    private final ContactOwnerService contactOwnerService;
+@Autowired
+    public ContactOwnerController(ContactOwnerService contactOwnerService) {
+        this.contactOwnerService = contactOwnerService;
     }
 
-    private void init() {
-        IntStream.range(0, 5).forEach(i -> {
-            ContactOwner owner = new ContactOwner();
-            owner.setId(UUID.randomUUID().toString());
-            owner.setRole(AppRole.USER);
-            owner.setEmail(faker.internet().emailAddress());
-            owner.setPassword(faker.internet().password(8, 20, true, false, true));
-            owner.setDescription(faker.lorem().sentence());
-            owner.setUsername(faker.name().username());
-            contactOwners.add(owner);
-
-        });
-    }
 
     @GetMapping("/get")
     public ResponseEntity<ServerResponse<List<ContactOwner>>> getAllContactOwner() {
-        return ServerResponseHelper.ok(contactOwners);
+        return ServerResponseHelper.ok(contactOwnerService.getAllContactOwners());
     }
 
     @GetMapping("/get/{id}")
     public ResponseEntity<ServerResponse<ContactOwner>> getAllContactOwner(@PathVariable String id) {
-        return contactOwners.stream().filter(owner -> owner.getId().equals(id))
-                .findFirst().map(ServerResponseHelper::ok).orElseGet(() -> ServerResponseHelper.notFound(null));
+        return ServerResponseHelper.ok(contactOwnerService.getContactOwnerById(id));
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ServerResponse<ContactOwner>> createContactOwner(@Valid
-                                                                           @RequestBody CreateContactOwnerDto createContactOwnerDto) {
-        if (contactOwners.stream().anyMatch(owner -> owner.getEmail().equalsIgnoreCase(createContactOwnerDto.getEmail()))) {
-            return ServerResponseHelper.conflict(null, Collections.singletonList("Email уже занят"));
-        }
-        ContactOwner newOwner = modelMapper.map(createContactOwnerDto, ContactOwner.class);
-        contactOwners.add(newOwner);
-        return ServerResponseHelper.created(newOwner);
+    public ResponseEntity<ServerResponse<ContactOwner>> createContactOwner(
+            @Valid
+            @RequestBody CreateContactOwnerDto createContactOwnerDto) {
+        ContactOwner contactOwner = contactOwnerService.createContactOwner(createContactOwnerDto);
+        return ServerResponseHelper.ok(contactOwner);
     }
 
     @PutMapping("/update")
     public ResponseEntity<ServerResponse<ContactOwner>> updateContactOwner(@Valid @RequestBody UpdateContactOwnerDto dto) {
-        ContactOwner existingContactOwner = contactOwners.stream().filter(co -> co.getId().equalsIgnoreCase(dto.getId()))
-                .findFirst().orElse(null);
-        if (existingContactOwner == null) {
-            return ServerResponseHelper.notFound(null, Collections.singletonList("Владелец с указанным ID не найден"));
-        }
-        boolean emailExists = contactOwners.stream().filter(co -> !co.getId().equalsIgnoreCase(dto.getId()))
-                .anyMatch(co -> co.getEmail().equalsIgnoreCase(dto.getEmail()));
-        if (emailExists) {
-            return ServerResponseHelper.conflict(null, Collections.singletonList("Владелец с указанным Email уже существует"));
-        }
-        ContactOwner updateContactOwner = modelMapper.map(dto, ContactOwner.class);
-        int index = contactOwners.indexOf(existingContactOwner);
-        contactOwners.set(index, updateContactOwner);
+        ContactOwner updateContactOwner = contactOwnerService.updateContactOwner(dto);
         return ServerResponseHelper.ok(updateContactOwner);
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ServerResponse<Void>> deleteContactOwner(@PathVariable String id){
-        boolean removed = contactOwners.removeIf(owner -> owner.getId().equalsIgnoreCase(id));
-        return removed ? ServerResponseHelper.ok(null) : ServerResponseHelper.notFound(null,
-                Collections.singletonList("Владелец с указанным ID не найден"));
+    contactOwnerService.deleteContactOwner(id);
+        return ServerResponseHelper.ok(null);
     }
 
     @GetMapping("/search/name/{name}")
     public ResponseEntity<ServerResponse<List<ContactOwner>>> searchByName(@PathVariable String name) {
-        List<ContactOwner> found = contactOwners.stream().filter(co -> co.getUsername().equalsIgnoreCase(name))
-                .toList();
-        return ServerResponseHelper.ok(found);
+    List<ContactOwner> found = contactOwnerService.searchContactOwnersByUsername(name);
+    return ServerResponseHelper.ok(found);
     }
 
     @GetMapping("/search/keyword/{keyword}")
     public ResponseEntity<ServerResponse<List<ContactOwner>>> searchByKeyword(@PathVariable String keyword) {
-        List<ContactOwner> found = contactOwners.stream().filter(co -> co.getUsername().contains(keyword)
-                || co.getDescription().contains(keyword)
-                ||co.getEmail().contains(keyword))
-                .toList();
+        List<ContactOwner> found = contactOwnerService.searchContactOwnersByKeyword(keyword);
         return ServerResponseHelper.ok(found);
     }
 }
