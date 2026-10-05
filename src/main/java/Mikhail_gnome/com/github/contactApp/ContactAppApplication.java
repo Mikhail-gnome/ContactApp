@@ -18,7 +18,7 @@ public class ContactAppApplication {
 		return  new CommandLineRunner() {
 			@Override
 			public void run(String... args) throws Exception {
-				dbInitializer.createDatabase();
+				dbInitializer.init();
 			}
 		};
 	}
