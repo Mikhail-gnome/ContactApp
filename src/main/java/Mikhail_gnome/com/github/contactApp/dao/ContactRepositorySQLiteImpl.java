@@ -52,7 +52,34 @@ public class ContactRepositorySQLiteImpl implements ContactRepository {
 
     @Override
     public Contact save(Contact contact) {
-        return null;
+        if (contact.getId() == 0) {
+            String sql = """
+                    INSERT INTO contacts (first_name, last_name, telephone, email)
+                    VALUES (?,?,?,?)
+                    """;
+            jdbcTemplate.update(sql, contact.getFirstName(),
+                    contact.getLastName(),
+                    contact.getTelephone(),
+                    contact.getEmail());
+            String idSql = "SELECT last_insert_rowid()";
+            int id = Optional.ofNullable(jdbcTemplate.queryForObject(idSql, Integer.class)).orElse(0);
+            contact.setId(id);
+        } else {
+            String sql = """
+                    UPDATE contacts SET 
+                    first_name = ?,
+                    last_name = ?, 
+                    telephone = ?, 
+                    email = ?
+                    WHERE id = ?;
+                    """;
+            jdbcTemplate.update(sql, contact.getFirstName(),
+                    contact.getLastName(),
+                    contact.getTelephone(),
+                    contact.getEmail(),
+                    contact.getId());
+        }
+        return contact;
     }
 
     @Override
