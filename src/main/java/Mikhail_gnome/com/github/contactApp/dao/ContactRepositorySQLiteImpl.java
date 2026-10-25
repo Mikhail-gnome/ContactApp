@@ -84,16 +84,22 @@ public class ContactRepositorySQLiteImpl implements ContactRepository {
 
     @Override
     public boolean deleteById(int id) {
-        return false;
+        String sql = "DELETE FROM contacts WHERE id = ?;";
+        return jdbcTemplate.update(sql, id) > 0;
     }
 
     @Override
     public Optional<Contact> findByEmail(String email) {
-        return Optional.empty();
-    }
+
+        String sql = "SELECT * FROM contacts WHERE email = ?;";
+        List<Contact> contacts = jdbcTemplate.query(sql, new ContactRowMapper(), email);
+        return contacts.isEmpty() ? Optional.empty() : Optional.of(contacts.getFirst());
+        }
 
     @Override
-    public Optional<Contact> findByTelephone(String Telephone) {
-        return Optional.empty();
+    public Optional<Contact> findByTelephone(String telephone) {
+        String sql = "SELECT * FROM contacts WHERE telephone = ?;";
+        List<Contact> contacts = jdbcTemplate.query(sql, new ContactRowMapper(), telephone);
+        return contacts.isEmpty() ? Optional.empty() : Optional.of(contacts.getFirst());
     }
 }
