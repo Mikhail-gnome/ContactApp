@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
+import java.util.UUID;
 
 @Component
 public class DatabaseInitializer {
@@ -23,6 +24,17 @@ private final String dbPath;
                             email TEXT NOT NULL)
                         """;
         stmt.execute(createContactTable);
+
+        String createContactOwnerTable = """
+                           CREATE TABLE IF NOT EXISTS contact_owners(
+                            id TEXT PRIMARY KEY,
+                            username TEXT UNIQUE,
+                            description TEXT,
+                            email TEXT UNIQUE,
+                            password TEXT,
+                            role TEXT)
+                        """;
+        stmt.execute(createContactOwnerTable);
     }
 
     private void insertTestDta(Statement stmt) throws SQLException {
@@ -43,6 +55,25 @@ private final String dbPath;
                     """;
             stmt.execute(insertData);
         }
+
+        String checkOwnersEmpty = "SELECT count(*) FROM contact_owners;";
+        ResultSet rsOwners = stmt.executeQuery(checkOwnersEmpty);
+        if (rsOwners.getInt(1) == 0) {
+            String insertOwnersData = """
+                    INSERT INTO contact_owners (id, username, description, email, password, role)
+                    VALUES
+                    (?, 'admin', 'Администратор системы', 'admin@example.com', 'AdminPass123', 'USER'),
+                    (?, 'user1', 'Первый пользователь', 'user1@example.com', 'User1Pass123', 'USER'),
+                    (?, 'user2', 'Второй пользователь', 'user2@example.com', 'User1Pass456', 'USER')
+                    """;
+            PreparedStatement preparedStatement = stmt.getConnection().prepareStatement(insertOwnersData);
+            for (int i = 1; i <= 3; i++) {
+                preparedStatement.setString(i, UUID.randomUUID().toString());
+            }
+            preparedStatement.execute();
+            preparedStatement.close();
+        }
+
     }
 
         public void createDatabaseStructure () throws SQLException {
